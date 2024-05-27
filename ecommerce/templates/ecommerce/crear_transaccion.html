@@ -1,0 +1,5 @@
+<form method="post" action="{% url 'create_transaction' %}">
+    {% csrf_token %}
+    <button type="submit">Pagar con Webpay</button>
+  </form>
+  

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Nuestros productos</h1>
+
+<!-- Tarjeta de producto 1 -->
+<div class="product-card">
+    <h2>Taladro</h2>
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4sKI1wDShd0KVa4CR-fDrMBMu7VN_I4UtC2lTUDw6XQ&s" alt="Imagen del Producto 1" style="width: 200px; height: auto;">
+    <p>Descripción del producto 1</p>
+    <p>Precio: $13.990</p>
+
+        <input type="hidden" name="producto_id" value="1">
+        <form id="form-pago" action="{% url 'iniciar_pago' %}" method="POST">
+            {% csrf_token %}
+            <!-- Aquí puedes agregar otros campos del formulario si es necesario -->
+            <button type="submit">Pagar</button>
+        </form>
+    <!-- Agrega más detalles según sea necesario -->
+</div>
+
+<!-- Tarjeta de producto 2 -->
+<div class="product-card">
+    <h2>Sierra</h2>
+    <img src="https://http2.mlstatic.com/D_NQ_NP_787080-MLA53616798949_022023-O.webp" alt="Imagen del Producto 2" style="width: 200px; height: auto;">
+    <p>Descripción del producto 2</p>
+    <p>Precio: $26.990</p>
+        <input type="hidden" name="producto_id" value="2">
+        <form id="form-pago" action="{% url 'iniciar_pago' %}" method="POST">
+            {% csrf_token %}
+            <!-- Aquí puedes agregar otros campos del formulario si es necesario -->
+            <button type="submit">Pagar</button>
+        </form>
+    <!-- Agrega más detalles según sea necesario -->
+</div>
+
+<div class="product-card">
+    <h2>Lijadora eléctrica</h2>
+    <img src="https://imagedelivery.net/4fYuQyy-r8_rpBpcY7lH_A/sodimacCL/45298X_01/w=800,h=800" alt="Imagen del Producto 3" style="width: 200px; height: auto;">
+    <p>Descripción del producto 3</p>
+    <p>Precio: $17.990</p>
+        <input type="hidden" name="producto_id" value="3">
+        <form id="form-pago" action="{% url 'iniciar_pago' %}" method="POST">
+            {% csrf_token %}
+            <!-- Aquí puedes agregar otros campos del formulario si es necesario -->
+            <button type="submit">Pagar</button>
+        </form>
+    <!-- Agrega más detalles según sea necesario -->
+</div>
+</body>
+
+
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('form-pago').addEventListener('submit', function(event) {
+            event.preventDefault(); // Evita que el formulario se envíe automáticamente
+            
+            // Realiza una solicitud POST al servidor
+            fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken') // Asegúrate de incluir el token CSRF en la solicitud
+                },
+                body: JSON.stringify({}) // Puedes enviar datos adicionales si es necesario
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Maneja la respuesta del servidor, por ejemplo, redirigiendo al usuario a la URL de pago
+                window.location.href = data.redirect_url;
+            })
+            .catch(error => {
+                // Maneja cualquier error que ocurra durante la solicitud
+                console.error('Error:', error);
+            });
+        });
+    });
+    
+    // Función para obtener el valor del token CSRF de las cookies
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    </script>
+    
+
+
+</html>
