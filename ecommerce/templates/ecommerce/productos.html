@@ -1,60 +1,119 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        .card-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        .card {
+            flex: 1 1 18rem;
+            max-width: 18rem;
+
+
+        }
+        html {
+      position: relative;
+      min-height: 100%;
+    }
+    body {
+      margin: 0;
+      padding-bottom: 100px; /* Altura del footer */
+    }
+    footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background-color: #333;
+      color: #fff;
+      padding: 20px 0;
+      text-align: center;
+    }
+    .footer-content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .footer-section {
+      margin: 0 20px;
+    }
+    .footer-section h2 {
+      margin-bottom: 10px;
+    }
+    .footer-section ul {
+      list-style: none;
+      padding: 0;
+    }
+    .footer-section ul li {
+      margin-bottom: 5px;
+    }
+    .zoomed {
+        transform: scale(1.1);
+        transition: transform 0.3s ease;
+      }
+      @media (max-width: 768px) {
+    .img-fluid {
+      width: 100%;
+      height: auto;
+    }
+  }
+
+
+    </style>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="">Ferremas</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+
+
+                </ul>
+            </div>
+        </div>
+    </nav>
     <h1>Nuestros productos</h1>
 
+
+{% for producto in productos %}    
 <!-- Tarjeta de producto 1 -->
 <div class="product-card">
-    <h2>Taladro</h2>
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4sKI1wDShd0KVa4CR-fDrMBMu7VN_I4UtC2lTUDw6XQ&s" alt="Imagen del Producto 1" style="width: 200px; height: auto;">
-    <p>Descripción del producto 1</p>
-    <p>Precio: $13.990</p>
+    <h2>{{producto.nombre}}</h2>
+    <p>{{producto.categoria}}</p>
+    <p>{{producto.Precio}}</p>
 
         <input type="hidden" name="producto_id" value="1">
         <form id="form-pago" action="{% url 'iniciar_pago' %}" method="POST">
-            {% csrf_token %}
             <!-- Aquí puedes agregar otros campos del formulario si es necesario -->
-            <button type="submit">Pagar</button>
+            <a href="{% url 'Add' producto.id %}" class="btn btn-primary"> Agregar al carrito </a>
         </form>
     <!-- Agrega más detalles según sea necesario -->
 </div>
 
-<!-- Tarjeta de producto 2 -->
-<div class="product-card">
-    <h2>Sierra</h2>
-    <img src="https://http2.mlstatic.com/D_NQ_NP_787080-MLA53616798949_022023-O.webp" alt="Imagen del Producto 2" style="width: 200px; height: auto;">
-    <p>Descripción del producto 2</p>
-    <p>Precio: $26.990</p>
-        <input type="hidden" name="producto_id" value="2">
-        <form id="form-pago" action="{% url 'iniciar_pago' %}" method="POST">
-            {% csrf_token %}
-            <!-- Aquí puedes agregar otros campos del formulario si es necesario -->
-            <button type="submit">Pagar</button>
-        </form>
-    <!-- Agrega más detalles según sea necesario -->
+{% endfor %}
+
+<div class="col-4">
+    {% include "ecommerce/carrito.html" %}
 </div>
-
-<div class="product-card">
-    <h2>Lijadora eléctrica</h2>
-    <img src="https://imagedelivery.net/4fYuQyy-r8_rpBpcY7lH_A/sodimacCL/45298X_01/w=800,h=800" alt="Imagen del Producto 3" style="width: 200px; height: auto;">
-    <p>Descripción del producto 3</p>
-    <p>Precio: $17.990</p>
-        <input type="hidden" name="producto_id" value="3">
-        <form id="form-pago" action="{% url 'iniciar_pago' %}" method="POST">
-            {% csrf_token %}
-            <!-- Aquí puedes agregar otros campos del formulario si es necesario -->
-            <button type="submit">Pagar</button>
-        </form>
-    <!-- Agrega más detalles según sea necesario -->
-</div>
-</body>
-
-
 
 
 
@@ -101,6 +160,27 @@
     }
     </script>
     
-
+    <footer>
+        <div class="footer-content">
+          <div class="footer-section about">
+            <h2>Sobre Nosotros</h2>
+            <p>Somos una ferretería dedicada a proveer productos de calidad para tus proyectos.</p>
+          </div>
+          <div class="footer-section contact">
+            <h2>Contacto</h2>
+            <p>Dirección: Calle Principal #123</p>
+            <p>Teléfono: 123-456-789</p>
+            <p>Email: info@ferreteria.com</p>
+          </div>
+          <div class="footer-section hours">
+            <h2>Horario de Atención</h2>
+            <p>Lunes a Viernes: 8:00 am - 6:00 pm</p>
+            <p>Sábados: 9:00 am - 1:00 pm</p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          &copy; 2024 Ferretería | Todos los derechos reservados.
+        </div>
+      </footer>
 
 </html>
