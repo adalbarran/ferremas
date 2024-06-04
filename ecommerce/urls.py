@@ -5,12 +5,16 @@ from django.conf import settings
 
 urlpatterns = [
     path('ecommerce', views.ecommerce, name='ecommerce'),
-    path('', views.index, name='index'),
+    path('index', views.index, name='index'),
     path('productos', views.productos, name='productos'),
     path('pago', views.pago, name='pago'),
 
     path('iniciar-pago/', views.iniciar_pago, name='iniciar_pago'),
     path('retorno-webpay/', views.retorno_webpay, name='retorno_webpay'),
+    path('registro/', views.registro_view, name='registro'),
+
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
 
 
 ]

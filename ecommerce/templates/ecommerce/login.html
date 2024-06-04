@@ -1,0 +1,29 @@
+{% extends './index.html' %}
+
+
+
+{% block body %}
+{% load static %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title text-center">Inicio de Sesion</h2>
+          
+          <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="text-center">
+              {{error}}
+              <button type="submit" class="btn btn-primary">Iniciar Sesion</button>
+              <p>¿Eres nuevo? Registrate aquí <a href="{% url 'registro' %}">Registrarse</a></p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<br></br>
+{% endblock %}
