@@ -5,8 +5,8 @@ from django.urls import reverse
 import requests
 from django.http import HttpResponse
 import transbank.webpay.webpay_plus as webpay  # Asegúrate de importar webpay correctamente
-from ecommerce.models import Producto
-from .models import Producto  # Ajusta esto según la ubicación de tu modelo Producto
+from ecommerce.models import articulo
+from .models import articulo # Ajusta esto según la ubicación de tu modelo Producto
 from .carrito import Carrito
 # Configurar Webpay Plus según los settings
 commerce_code = settings.TRANSACTION_CONFIG['commerce_code']
@@ -40,25 +40,25 @@ def index(request):
     return render(request, 'ecommerce/index.html')
 
 def productos(request):
-    productos = Producto.objects.all()
+    productos = articulo.objects.all()
     return render(request, 'ecommerce/productos.html', {'productos': productos})
 
 
 def agregar_producto(request, producto_id):
     carrito = Carrito(request)
-    producto = Producto.objects.get(id=producto_id)
+    producto = articulo.objects.get(id=producto_id)
     carrito.agregar(producto)
     return redirect("productos")
 
 def eliminar_producto(request, producto_id):
     carrito = Carrito(request)
-    producto = Producto.objects.get(id=producto_id)
+    producto = articulo.objects.get(id=producto_id)
     carrito.eliminar(producto)
     return redirect("productos")
 
 def restar_producto(request, producto_id):
     carrito = Carrito(request)
-    producto = Producto.objects.get(id=producto_id)
+    producto = articulo.objects.get(id=producto_id)
     carrito.restar(producto)
     return redirect("productos")    
 
