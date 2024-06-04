@@ -22,7 +22,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
-from .models import articulo, Carrito
+from .models import articulo
 from django.http import JsonResponse,HttpResponse
 from .forms import ProductosForm
 from transbank.webpay.webpay_plus.transaction import Transaction, WebpayOptions

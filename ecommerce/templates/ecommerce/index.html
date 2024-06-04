@@ -112,15 +112,12 @@
                     </li>
                   {% else %}
                   {% endif %}
-
-
-
                 </ul>
             </div>
         </div>
     </nav>
-    {% block body %}
-    {% endblock %}
+{% block body %}
+{% endblock %}
     <section style="background-color: gray;">
 
 
@@ -198,7 +195,7 @@
       
             <div class="d-flex align-items-center" style="height: auto; margin-top: 10px; margin-left: 50px; position: relative;">
               <div>
-                <a href="#">
+                <a href="{% url 'productos' %}">
       
                   <img src="{% static 'img/arreglo-herramientas-trabajos-artesanales_23-2148732414.avif' %}" alt="Girl in a jacket" style="width: 200px; height: 700px; object-fit: cover;" onmouseover="zoomIn(this)" onmouseout="zoomOut(this)">
       
@@ -214,7 +211,7 @@
             
             <div class="d-flex align-items-center" style="height: auto; margin-top: 10px; margin-left: 50px;">
               <div>
-                <a href="#">
+                <a href="{% url 'productos' %}">
       
                   <img src="{% static 'img/herramientas-sobre-mesa_144627-8729.avif' %}" alt="Girl in a jacket" style="width: 200px; height: 700px; object-fit: cover;" onmouseover="zoomIn(this)" onmouseout="zoomOut(this)">
       
