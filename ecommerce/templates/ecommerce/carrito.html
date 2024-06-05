@@ -37,10 +37,14 @@
                 <div class="row text-center">
                     <div class="col-6">
                         <a href="{% url 'ClS' %}" class="btn btn-danger btn-block">Limpiar</a>
+                        {% csrf_token %}
+
                     </div>
-                    <div class="col-6">
-                        <a href="#" class="btn btn-success btn-block">Guardar</a>
-                    </div>
+                    <form action="{% url 'iniciar_pago' %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Comprar</button>
+                    </form>
+    
                 </div>
             </div>
         </div>

@@ -22,7 +22,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
-from .models import articulo
+from .models import articulo, Carritos
 from django.http import JsonResponse,HttpResponse
 from .forms import ProductosForm
 from transbank.webpay.webpay_plus.transaction import Transaction, WebpayOptions
@@ -30,26 +30,69 @@ import hashlib
 from django.conf import settings
 from transbank.common.integration_type import IntegrationType
 from django.urls import reverse
+import hashlib
+from django.shortcuts import redirect, reverse, HttpResponse
+import hashlib
+from django.shortcuts import redirect, reverse, HttpResponse
+from .models import Carritos, articulo
+from django.conf import settings
+from transbank.webpay.webpay_plus.transaction import Transaction, WebpayOptions
+from transbank.common.integration_type import IntegrationType
+
 
 def iniciar_pago(request):
-    # Datos de la transacción
-    amount = 10000  # Monto en pesos chilenos
-    buy_order = '123'
-    session_id = '1'
-    return_url = request.build_absolute_uri(reverse('retorno_webpay'))  # Obtener la URL de retorno absoluta
-    
-    # Crear la transacción utilizando el SDK de Transbank
-    resp = webpay.create(buy_order, session_id, amount, return_url)
-    
-    # Manejar la respuesta
-    if resp["response_code"] == "SUCCESS":
-        url = resp['url']
-        token = resp['token']
-        redirect_url = resp.get("url")
-        return render(request, 'pago.html', {'redirect_url': redirect_url})
-    else:
-        return HttpResponse("Error al crear la transacción con Transbank")
+    if request.method == "POST":
+        # Calcular el total del carrito desde la sesión
+        total = 0
+        if "carrito" in request.session:
+            for key, value in request.session["carrito"].items():
+                total += int(value["acumulado"])
 
+        if total > 0:
+            session_key = request.session.session_key
+            buy_order = hashlib.md5(session_key.encode()).hexdigest()[:26]
+            session_id = f"sesion_{session_key}"
+            amount = total
+            return_url = request.build_absolute_uri(reverse('confirmar_pago'))
+
+            tx = Transaction(WebpayOptions(settings.TRANBANK_COMMERCE_CODE, settings.TRANBANK_API_KEY, IntegrationType.TEST))
+            try:
+                response = tx.create(buy_order, session_id, amount, return_url)
+                if response:
+                    return redirect(response['url'] + "?token_ws=" + response['token'])
+                else:
+                    return HttpResponse("No se recibió respuesta de Transbank.")
+            except Exception as e:
+                return HttpResponse(f"Error interno: {str(e)}")
+        else:
+            return HttpResponse("El carrito está vacío.")
+    else:
+        return HttpResponse("Método no permitido.", status=405)
+
+def confirmar_pago(request):
+    token_ws = request.GET.get('token_ws')
+    if not token_ws:
+        return HttpResponse("Token no proporcionado.")
+
+    try:
+        tx = Transaction(WebpayOptions(settings.TRANBANK_COMMERCE_CODE, settings.TRANBANK_API_KEY, IntegrationType.TEST))
+        response = tx.commit(token_ws)
+        if response and response['status'] == 'AUTHORIZED':
+
+            # Obtener el carrito de la sesión
+            carrito = request.session.get('carrito', {})
+            
+            for producto_id, cantidad in carrito.items():
+                producto = articulo.objects.get(id_articulo=producto_id)
+                print(f"Producto: {producto.nombre}, Cantidad: {cantidad}")
+            
+         
+
+            return render(request, 'confirmacion_pago.html', {'response': response})
+        else:
+            return HttpResponse("No se recibió respuesta de Transbank.")
+    except Exception as e:
+        return HttpResponse(f"Error interno: {str(e)}")
 
 
 def index(request):

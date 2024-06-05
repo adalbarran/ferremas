@@ -131,7 +131,9 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
+TRANBANK_API_KEY = '579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C'
+TRANBANK_COMMERCE_CODE = '597055555532'  # Este es el código de comercio para Webpay Plus en ambiente de integración
+TRANBANK_INTEGRATION_TYPE = 'IntegrationType.TEST'
 import os 
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 

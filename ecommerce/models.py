@@ -10,7 +10,7 @@ class articulo(models.Model):
     def __str__(self):
         return f'{self.nombre} -> {self.precio}'
 
-class Carrito(models.Model):
+class Carritos(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
     articulos = models.ManyToManyField('articulo', related_name='carritos', blank=True)
 
