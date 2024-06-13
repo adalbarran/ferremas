@@ -78,25 +78,29 @@ def confirmar_pago(request):
         tx = Transaction(WebpayOptions(settings.TRANBANK_COMMERCE_CODE, settings.TRANBANK_API_KEY, IntegrationType.TEST))
         response = tx.commit(token_ws)
         if response and response['status'] == 'AUTHORIZED':
-
             # Obtener el carrito de la sesión
             carrito = request.session.get('carrito', {})
             
             for producto_id, cantidad in carrito.items():
-                producto = articulo.objects.get(id_articulo=producto_id)
-                print(f"Producto: {producto.nombre}, Cantidad: {cantidad}")
-            
-         
+                try:
+                    producto = articulo.objects.get(id=producto_id)
+                    print(f"Producto: {producto.nombre}, Cantidad: {cantidad}")
+                except articulo.DoesNotExist:
+                    return HttpResponse(f"Producto con id {producto_id} no encontrado.")
 
-            return render(request, 'confirmacion_pago.html', {'response': response})
+            return render(request, 'ecommerce/pagoconfirmado.html', {'response': response})
         else:
-            return HttpResponse("No se recibió respuesta de Transbank.")
+            return render(request, 'ecommerce/pagorechazado.html', {'response': response})
     except Exception as e:
         return HttpResponse(f"Error interno: {str(e)}")
 
 
+
 def index(request):
     return render(request, 'ecommerce/index.html')
+
+def carrito(request):
+    return render(request, 'ecommerce/carrito.html')
 
 def productos(request):
     productos = articulo.objects.all()

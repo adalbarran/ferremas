@@ -6,7 +6,7 @@ class articulo(models.Model):
     nombre = models.CharField(max_length=100, blank=False, null=False)
     categoria = models.CharField(max_length=32)
     precio = models.IntegerField()
-
+    imagen = models.ImageField(upload_to='imagenes_articulos/', blank=True, null=True)
     def __str__(self):
         return f'{self.nombre} -> {self.precio}'
 
