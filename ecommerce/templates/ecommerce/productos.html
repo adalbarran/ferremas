@@ -19,6 +19,7 @@
             flex-wrap: wrap;
             gap: 2rem;
             margin-top: 2rem;
+            margin-bottom: 25rem;
         }
         .card {
             flex: 1 1 18rem;
@@ -33,11 +34,8 @@
             object-fit: cover;
         }
         footer {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background-color: #333;
-            color: #fff;
+            background-color: #0a0a0a;
+            color: #f9f7f7;
             padding: 20px 0;
             text-align: center;
         }
@@ -66,18 +64,23 @@
             z-index: 1000;
         }
         .cart-icon {
+            object-fit: cover;
             display: flex;
             align-items: center;
-            justify-content: center;
-            width: 50px;
+            margin-right: 50px;
+            margin-left: 60px;
+            margin-top: 20px;
+            width: 80px;
             height: 50px;
-            background-image: url('https://banner2.cleanpng.com/20180515/zfw/kisspng-shopping-cart-logo-shopping-bags-trolleys-5afb65b09c72d4.3564791415264250086408.jpg');
-            background-size: cover;
+            background-image: url('https://banner2.cleanpng.com/20180515/zfw/kisspng-shopping-cart-logo-shopping-bags-trolleys-5afb65b09c72d4.3564791415264250086408.jpg') ;
+            background-size: contain;
             border-radius: 50%;
             color: white;
             font-size: 1.2rem;
             text-decoration: none;
             position: relative;
+            justify-content: center;
+            align-content: center;
         }
         .cart-count {
             position: absolute;
@@ -91,7 +94,7 @@
         }
     </style>
 </head>
-<body>
+    <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'index' %}">Ferremas</a>
@@ -129,7 +132,7 @@
             {% for producto in productos %}
             <div class="card">
                 {% if producto.imagen %}
-                    <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}">
+                    <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}" style="object-fit: contain; margin-top: 200xp;" >
                 {% else %}
 
                 {% endif %}
@@ -150,26 +153,30 @@
 
     <footer>
         <div class="footer-content">
-            <div class="footer-section about">
-                <h2>Sobre Nosotros</h2>
-                <p>Somos una ferretería dedicada a proveer productos de calidad para tus proyectos.</p>
-            </div>
-            <div class="footer-section contact">
-                <h2>Contacto</h2>
-                <p>Dirección: Calle Principal #123</p>
-                <p>Teléfono: 123-456-789</p>
-                <p>Email: info@ferreteria.com</p>
-            </div>
-            <div class="footer-section hours">
-                <h2>Horario de Atención</h2>
-                <p>Lunes a Viernes: 8:00 am - 6:00 pm</p>
-                <p>Sábados: 9:00 am - 1:00 pm</p>
-            </div>
+          <div class="footer-section about">
+            <h2>Sobre Nosotros</h2>
+            <p>Somos una ferretería dedicada a proveer productos de calidad para tus proyectos.</p>
+          </div>
+          <div class="footer-section contact">
+            <h2>Contacto</h2>
+            <p>Dirección: Calle Principal #123</p>
+            <p>Teléfono: 123-456-789</p>
+            <p>Email: info@ferreteria.com</p>
+          </div>
+          <div class="footer-section hours">
+            <h2>Horario de Atención</h2>
+            <p>Lunes a Viernes: 8:00 am - 6:00 pm</p>
+            <p>Sábados: 9:00 am - 1:00 pm</p>
+          </div>
         </div>
         <div class="footer-bottom">
-            &copy; 2024 Ferretería | Todos los derechos reservados.
+          &copy; 2024 Ferretería | Todos los derechos reservados.
         </div>
-    </footer>
+      </footer>
 
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384"></script>
+
+    </body>
+
+</html>
