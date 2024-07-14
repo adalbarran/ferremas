@@ -124,11 +124,13 @@ def agregar_producto(request, producto_id):
         try:
             producto = articulo.objects.get(id=producto_id)
             carrito.agregar(producto)
-            return JsonResponse({'status': 'success', 'message': 'Producto agregado al carrito.'})
+            return redirect("productos")
+
         except articulo.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Producto no encontrado.'})
     else:
         return JsonResponse({'status': 'error', 'message': 'Método no permitido. Debe ser una solicitud POST.'})
+    return redirect("productos")
 
 def eliminar_producto(request, producto_id):
     carrito = Carrito(request)

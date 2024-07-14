@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 class Carrito:
-    def __init__(self, request):
+    def float(self, request):
         self.request = request
         self.session = request.session
         carrito = self.session.get("carrito")
