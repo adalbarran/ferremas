@@ -5,8 +5,10 @@ from django.contrib.auth.models import User
 class articulo(models.Model):
     nombre = models.CharField(max_length=100, blank=False, null=False)
     categoria = models.CharField(max_length=32)
-    precio = models.IntegerField()
-    imagen = models.ImageField(upload_to='imagenes_articulos/', blank=True, null=True)
+    precio = models.DecimalField(max_digits=8, decimal_places=2) # Campo para el precio del producto
+    stock = models.IntegerField(default=0) # Campo para el stock del producto con valor predeterminado
+    imagen = models.ImageField(upload_to='productos', null=True, blank=True) # Campo para la imagen del producto
+
     def __str__(self):
         return f'{self.nombre} -> {self.precio}'
 
@@ -16,4 +18,3 @@ class Carritos(models.Model):
 
     def __str__(self):
         return f"Carrito de {self.usuario.username}"
-

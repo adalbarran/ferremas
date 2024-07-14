@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.shortcuts import render, redirect
 from django.conf import settings
 from transbank.webpay.webpay_plus.transaction import Transaction
@@ -8,11 +9,13 @@ import transbank.webpay.webpay_plus as webpay  # Asegúrate de importar webpay c
 from ecommerce.models import articulo
 from .models import articulo # Ajusta esto según la ubicación de tu modelo Producto
 from .carrito import Carrito
-# Configurar Webpay Plus según los settings
+from ecommerce.templatetags.custom_filters import formato_moneda# Configurar Webpay Plus según los settings
+from .utils import obtener_tipo_cambio, SERIES_CODIGOS
+
 commerce_code = settings.TRANSACTION_CONFIG['commerce_code']
 api_key = settings.TRANSACTION_CONFIG['api_key']
 integration_type = settings.TRANSACTION_CONFIG['integration_type']
-
+from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth import login as auth_login, logout, authenticate
 from django.contrib.auth.decorators import login_required
@@ -38,6 +41,10 @@ from .models import Carritos, articulo
 from django.conf import settings
 from transbank.webpay.webpay_plus.transaction import Transaction, WebpayOptions
 from transbank.common.integration_type import IntegrationType
+import bcchapi
+from datetime import datetime, timedelta
+from .utils import obtener_tipo_cambio, SERIES_CODIGOS
+from decimal import Decimal
 
 
 def iniciar_pago(request):
@@ -107,17 +114,27 @@ def productos(request):
     return render(request, 'ecommerce/productos.html', {'productos': productos})
 
 
+from django.http import JsonResponse
+from .models import articulo
+from .carrito import Carrito
+
 def agregar_producto(request, producto_id):
-    carrito = Carrito(request)
-    producto = articulo.objects.get(id=producto_id)
-    carrito.agregar(producto)
-    return redirect("productos")
+    if request.method == 'POST':
+        carrito = Carrito(request)
+        try:
+            producto = articulo.objects.get(id=producto_id)
+            carrito.agregar(producto)
+            return JsonResponse({'status': 'success', 'message': 'Producto agregado al carrito.'})
+        except articulo.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Producto no encontrado.'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Método no permitido. Debe ser una solicitud POST.'})
 
 def eliminar_producto(request, producto_id):
     carrito = Carrito(request)
     producto = articulo.objects.get(id=producto_id)
     carrito.eliminar(producto)
-    return redirect("productos")
+    return redirect("productos.html")
 
 def restar_producto(request, producto_id):
     carrito = Carrito(request)
@@ -188,3 +205,36 @@ def registro_view(request):
             'error': 'Las contraseñas no coinciden'
         })
 
+def detalles(request, producto_id): # Vista para el detalle de un producto
+    producto = get_object_or_404(Producto, id=producto_id) # Se obtiene el producto
+
+    if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        data = json.loads(request.body) 
+        moneda = data.get('moneda', 'CLP') 
+    else: 
+        moneda = 'CLP' 
+        
+    serie_codigo = SERIES_CODIGOS.get(moneda)
+    tipo_cambio = obtener_tipo_cambio(serie_codigo) 
+
+    if tipo_cambio != Decimal('1'):
+        precio_convertido = producto.precio / tipo_cambio 
+    else: 
+        precio_convertido = producto.precio
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest': 
+        data = {
+            'precio_convertido': formato_moneda(precio_convertido, moneda), 
+            'tipo_cambio': formato_moneda(tipo_cambio, 'CLP') if tipo_cambio != Decimal('1') else None, 
+            'moneda': moneda 
+        }
+        return JsonResponse(data)
+    
+    context = { 
+        'producto': producto, 
+        'moneda': moneda,
+        'precio_convertido': precio_convertido,   
+        'tipo_cambio': tipo_cambio
+    }
+
+    return render(request, 'ecommerce/productos.html', context) # Se renderiza la plantilla con el contexto

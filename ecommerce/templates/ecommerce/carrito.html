@@ -1,3 +1,5 @@
+{% load custom_filters %}
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -100,7 +102,7 @@
                                     <div class="col-md-8">
                                         <div class="card-body">
                                             <h5 class="card-title">{{ value.nombre }}</h5>
-                                            <p class="card-text"><strong>Precio:</strong> ${{ value.precio }}</p>
+                                            <p class="card-text"><strong>Precio:</strong> ${{ value.precio|formato_moneda }}</p>
                                             <p class="card-text">
                                                 <strong>Cantidad:</strong> {{ value.acumulado }}
                                                 <a href="{% url 'Add' value.producto_id %}" class="badge btn btn-dark badge-dark ml-2">+</a>
@@ -128,12 +130,61 @@
                         <form action="{% url 'iniciar_pago' %}" method="post" class="d-inline">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-primary">Comprar</button>
-                        </form>
+                            <div class="bg-success-subtle px-5 rounded-3 mt-5">
+                                <form method="post" action="" class="pt-5 form-inline">
+                                    {% csrf_token %}
+                                    <label for="moneda" class="fs-2 me-3 ">Seleccione la Moneda:</label>
+                                    <select style="background-color: rgb(255, 255, 255); 
+                                                   padding: 5px; border: #5f5f5f solid 1px; 
+                                                   border-radius: 5px;
+                                                   color: #929292 ;" 
+                                                   class="fs-2" 
+                                                   name="moneda" 
+                                                   id="moneda" 
+                                                   class="form-control" 
+                                                   onchange="this.form.submit()">
+                                        <option value="CLP" {% if moneda == 'CLP' %}selected{% endif %}>CLP</option>
+                                        <option value="USD" {% if moneda == 'USD' %}selected{% endif %}>USD</option>
+                                        <option value="ARS" {% if moneda == 'ARS' %}selected{% endif %}>ARS</option>
+                                    </select>
+                                </form>
+                                <div class="mt-3 rounded-3 pb-5 fs-2" style="font-weight: bold; text-transform: uppercase;">
+                                    <p>Precio en {{ moneda }}: ${{ precio_convertido|floatformat:2 }}</p>
+                                    {% if tipo_cambio != 1 %}
+                                    <p>Tipo de Cambio: ${{ tipo_cambio|floatformat:2 }} CLP/{{ moneda }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                </div>
                     </div>
                 </div>
             </div>
         </div>
-    
+        <script>
+            function convertirMoneda(productoId) {
+                const moneda = document.getElementById('moneda').value;
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+                fetch(`/detalle/${productoId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
+                        'x-requested-with': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ moneda: moneda })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const precioConvertidoDiv = document.getElementById('precio-convertido');
+                    precioConvertidoDiv.innerHTML = `<p>Precio en ${data.moneda}: ${data.precio_convertido}</p>`;
+                    if (data.tipo_cambio) {
+                        precioConvertidoDiv.innerHTML += `<p>Tipo de Cambio: ${data.tipo_cambio} / ${data.moneda}</p>`;
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+            </script>
         <footer>
             <div class="footer-content">
                 <div class="footer-section about">
