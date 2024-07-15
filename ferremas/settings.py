@@ -130,6 +130,7 @@ TRANBANK_INTEGRATION_TYPE = 'IntegrationType.TEST'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Configuración API BancoCentral ---- Cambiar en archivo .env
 BCCH_API_USER = config('BCCH_API_USER')
